@@ -14,6 +14,6 @@ Specifically, it looks at pull requests that might contain secrets, or sensitive
 - Passwords
 
 
-Once a key is found, an alert is created to notify the user of the issue and prevents the pull request from merging. This is done by using [Gitleaks](https://github.com/gitleaks/gitleaks), an open-source tool created to detect passwords and API keys.
+Once a key is found, an alert is created to notify the developer of the issue and prevents the pull request from merging. This is done by using [Gitleaks](https://github.com/gitleaks/gitleaks), and [Trivy](https://github.com/aquasecurity/trivy) to detect container and dependency vulnerabilities.
 
-The project itself a deployed docker
+The project is a containerized Go API deployed to the [GitHub Container Registry (GHCR)](https://github.com/hjg17/centuria/pkgs/container/centuria), featuring a public `/healthz` health check endpoint and a protected `/api/v1/data` endpoint secured via an API secret. If all security scans pass on the main branch, the pipeline automatically builds and publishes the container image for production use.
