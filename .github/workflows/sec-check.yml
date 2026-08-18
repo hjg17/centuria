@@ -24,11 +24,11 @@ jobs:
      # Build image locally
      - name: build image
        run: docker build -t app:${{ github.sha }} app
-     # Scan image for vulnerabilities using trivy
+     # Scan image for vulnerabilities using Trivy
      - name: trivy scan
        uses: aquasecurity/trivy-action@v0.36.0
        with:
-         image-ref: app
+         image-ref: 'app:${{ github.sha }}'
          format: 'table'
          exit-code: '1'
          ignore-unfixed: true
@@ -40,8 +40,10 @@ jobs:
          registry: ghcr.io
          username: ${{ github.actor }}
          password: ${{ secrets.GITHUB_TOKEN }}
-     - name: image push
+     - name: push image
        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
        run: |
-         docker tag app ghcr.io/${{ github.repository }}:latest
+         docker tag app:${{ github.sha }} ghcr.io/${{ github.repository }}:${{ github.sha }}
+         docker tag app:${{ github.sha }} ghcr.io/${{ github.repository }}:latest
+         docker push ghcr.io/${{ github.repository }}:${{ github.sha }}
          docker push ghcr.io/${{ github.repository }}:latest
