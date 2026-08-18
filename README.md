@@ -1,19 +1,28 @@
-
 # Centuria
 
 ## Secure CI/CD Pipeline Demo
 
+This project demonstrates an automated CI/CD pipeline using GitHub Actions to inspect incoming pull requests and prevent security risks from reaching production.
 
+### Security Scanning
 
-This demo showcases a secure CI/CD pipeline.
+The pipeline runs automated checks on every pull request for the following
 
-Specifically, it looks at pull requests that might contain secrets, or sensitive data such as the following
+- **Secrets Detection**
+  -  The pipeline uses [Gitleaks](https://github.com/gitleaks/gitleaks) to detect the following secrets
+     -  exposed API keys
+     -  SSH keys
+     -  passwords
+- **Vulnerability Scanning**
+  -  The pipeline uses [Trivy](https://github.com/aquasecurity/trivy) to identify vulnerabilities across dependencies and base container image layers
 
-- SSH keys
-- API keys
-- Passwords
+If secrets or vulnerabilities are detected, the security check fails and surfaces the findings directly in the pull request and repository security alerts.
 
+### Application & Deployment
 
-Once a key is found, an alert is created to notify the developer of the issue and prevents the pull request from merging. This is done by using [Gitleaks](https://github.com/gitleaks/gitleaks), and [Trivy](https://github.com/aquasecurity/trivy) to detect container and dependency vulnerabilities.
+The application is a containerized Go API featuring
 
-The project is a containerized Go API deployed to the [GitHub Container Registry (GHCR)](https://github.com/hjg17/centuria/pkgs/container/centuria), featuring a public `/healthz` health check endpoint and a protected `/api/v1/data` endpoint secured via an API secret. If all security scans pass on the main branch, the pipeline automatically builds and publishes the container image for production use.
+- A public `/healthz` endpoint for uptime monitoring and health checks
+- A protected `/api/v1/data` endpoint secured via an API secret
+
+When all security checks pass, the pipeline automatically builds and publishes the production container image to the [GitHub Container Registry (GHCR)](https://github.com/hjg17/centuria/pkgs/container/centuria).
