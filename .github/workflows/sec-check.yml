@@ -23,7 +23,7 @@ jobs:
          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
      # Build image locally
      - name: build image
-       run: docker build -t app:${{ github.sha }} .
+       run: docker build -f app/Dockerfile -t app:${{ github.sha }} .
      # Scan image for vulnerabilities using trivy
      - name: trivy scan
        uses: aquasecurity/trivy-action@v0.36.0
