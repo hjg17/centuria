@@ -46,7 +46,7 @@ When all security checks pass, the pipeline automatically builds and publishes t
 #### Run the Container
 
 ```bash
-docker run --rm -d -p 8080:8080 -e API_SECRET="test-key-123" ghcr.io/hjg17/centuria:latest
+docker run --rm -d -p 8080:8080 -e API_SECRET="<YOUR_SECRET>" ghcr.io/hjg17/centuria:latest
 ```
 
 #### Test Endpoints
@@ -59,12 +59,13 @@ curl -i http://localhost:8080/healthz
 curl -i http://localhost:8080/api/v1/data
 
 # Protected endpoint (authorized)
-curl -i -H "Authorization: test-key-123" http://localhost:8080/api/v1/data
+curl -i -H "Authorization: <YOUR_SECRET>" http://localhost:8080/api/v1/data
 ```
 
 ### Architecture
 
 ```mermaid
+%%{init: {'theme': 'neutral'}}%%
 flowchart TD
     subgraph Triggers["Triggers"]
         PR["Pull Request"]
@@ -72,8 +73,8 @@ flowchart TD
     end
 
     subgraph Security["Security Scans"]
-        Gitleaks["Gitleaks<br/>(Secret Scan)"]
-        Trivy["Trivy<br/>(Vulnerability Scan)"]
+        Gitleaks["Gitleaks (Secret Scan)"]
+        Trivy["Trivy (Vulnerability Scan)"]
     end
 
     Decision{"Checks Pass?"}
@@ -81,12 +82,12 @@ flowchart TD
 
     subgraph Release["Release"]
         DockerBuild["Docker Build"]
-        GHCR[("GitHub Container<br/>Registry (GHCR)")]
+        GHCR[("GitHub Container Registry")]
     end
 
     subgraph API["Go API (Port 8080)"]
-        Health["/healthz<br/>(Public)"]
-        Data["/api/v1/data<br/>(Protected)"]
+        Health["/healthz (Public)"]
+        Data["/api/v1/data (Protected)"]
     end
 
     PR --> Gitleaks
@@ -103,10 +104,4 @@ flowchart TD
     DockerBuild --> GHCR
     GHCR -.-> Health
     GHCR -.-> Data
-
-    style Decision fill:#ffe8cc,stroke:#d9480f
-    style SecurityAlert fill:#ffe3e3,stroke:#e03131
-    style GHCR fill:#d3f9d8,stroke:#2b8a3e
-    style Gitleaks fill:#fff3bf,stroke:#f08c00
-    style Trivy fill:#fff3bf,stroke:#f08c00
 ```
