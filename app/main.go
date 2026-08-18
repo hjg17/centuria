@@ -6,8 +6,7 @@ import (
 	"os"
 	"strings"
 )
-// Demo API key
-const hardCodedKey = "AIzaEXAMPLED99NlL8x9A9T3tJ9h118Zc1gC1DK"
+// Demo API key now removed
 
 func main() {
 	// Health check endpoint
@@ -19,15 +18,12 @@ func main() {
 	// API endpoint that requires an API key for access
 	http.HandleFunc("/api/v1/data", func(w http.ResponseWriter, r *http.Request) {
 		expected := os.Getenv("API_SECRET")
-		if expected == "" {
-			expected = hardCodedKey
-		}
 
 		// Check for the API key in the Authorization header
 		token := r.Header.Get("Authorization")
 
-		// Ideally, we would also check for empty tokens and deny authorization, but we will allow it to be empty for this demo
-		if token != expected {
+		// Validate the token against the expected value
+		if expected == "" || token != expected {
 			http.Error(w, "Unauthorized", http.StatusUnauthorized)
 			return
 		}
