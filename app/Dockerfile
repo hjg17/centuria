@@ -1,5 +1,7 @@
-# Use the latest Alpine image
-FROM alpine:latest
+# Use an Alpine image
+# In this case, it's outdated
+FROM alpine:3.14
+
 
 # Set the working directory
 WORKDIR /app
